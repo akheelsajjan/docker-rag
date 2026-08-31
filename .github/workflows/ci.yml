@@ -27,3 +27,6 @@ jobs:
 
       - name: Run tests
         run: uv run python -m pytest tests -q
+
+      - name: Build Docker image
+        run: docker build -t docker-rag .
