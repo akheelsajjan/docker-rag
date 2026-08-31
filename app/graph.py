@@ -1,5 +1,6 @@
 import sqlite3
 from typing import Optional, Annotated
+from click import prompt
 from typing_extensions import TypedDict
 
 from langchain_core.messages import HumanMessage, AIMessage
@@ -8,7 +9,8 @@ from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
 from langgraph.checkpoint.sqlite import SqliteSaver
 
-from app.rag import llm
+from app.rag import get_llm
+
 from app.tools import tools, llm_with_tools, search_local_docs
 from app.guardrails import (
     redact_pii, rate_limiter, check_cache, store_cache,
@@ -131,7 +133,7 @@ def classify(state: GraphState) -> dict:
     Return ONLY one word.
     User: {question}"""
 
-    result = llm.invoke(prompt)
+    result = get_llm().invoke(prompt)
     return {"classification": result.content.strip().lower()}
 
 
@@ -149,7 +151,7 @@ def respond(state: GraphState) -> dict:
     elif classification == "rag":
         docs = search_local_docs.invoke({"query": messages[-1].content})
         grounded_prompt = f"Answer using ONLY this context:\n{docs}\n\nQuestion: {messages[-1].content}"
-        result = llm.invoke(grounded_prompt)
+        result = get_llm().invoke(grounded_prompt)
         return {"messages": [result]}
 
     return {"messages": [AIMessage(content="I'm not sure how to respond to that.")]}

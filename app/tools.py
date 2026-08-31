@@ -1,6 +1,6 @@
 from langchain.tools import tool
 
-from app.rag import vectorstore, llm
+from app.rag import vectorstore, get_llm
 from fastmcp import Client
 
 
@@ -65,4 +65,4 @@ def divide(a: float, b: float) -> float:
 
 
 tools = [mcp_add_tool, subtract, multiply, divide, search_local_docs]
-llm_with_tools = llm.bind_tools(tools, tool_choice="auto")
+llm_with_tools = get_llm().bind_tools(tools, tool_choice="auto")

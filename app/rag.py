@@ -11,7 +11,13 @@ load_dotenv()
 
 INDEX_NAME = "langsmith-llm-prod-guide"
 
-llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0)
+
+
+def get_llm():
+    return ChatGroq(
+        model="openai/gpt-oss-120b",
+        temperature=0
+    )
 
 embeddings = HuggingFaceEmbeddings(model_name="BAAI/bge-small-en-v1.5")
 vectorstore = PineconeVectorStore(index_name=INDEX_NAME, embedding=embeddings)

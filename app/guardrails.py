@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from presidio_analyzer import AnalyzerEngine
 from presidio_anonymizer import AnonymizerEngine
 
-from app.rag import llm
+from app.rag import get_llm
 
 analyzer = AnalyzerEngine()
 anonymizer = AnonymizerEngine()
@@ -127,8 +127,8 @@ class OutputGuardrailResult(BaseModel):
     reason: str
 
 
-guardrail_llm = llm.with_structured_output(GuardrailResult, method="json_mode")
-output_guardrail_llm = llm.with_structured_output(OutputGuardrailResult, method="json_mode")
+guardrail_llm = get_llm().with_structured_output(GuardrailResult, method="json_mode")
+output_guardrail_llm = get_llm().with_structured_output(OutputGuardrailResult, method="json_mode")
 
 JAILBREAK_PATTERNS = [
     r"ignore (all |previous |your )?instructions",
