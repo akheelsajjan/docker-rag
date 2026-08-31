@@ -1,0 +1,45 @@
+# LLM Production Guide
+
+Large Language Models (LLMs) can automate tasks such as question answering, summarization, classification, translation, and code generation. A production system should prioritize reliability, observability, security, and predictable behavior over raw model intelligence.
+
+Prompt engineering is the process of designing instructions that guide the model toward the desired output. Effective prompts clearly define the task, provide necessary context, specify the expected format, and include examples when appropriate. Prompts should be version-controlled because even small wording changes can significantly affect model behavior.
+
+Retrieval Augmented Generation (RAG) allows an LLM to answer questions using external knowledge instead of relying only on its training data. Documents are split into chunks, converted into embeddings, stored in a vector database, retrieved using semantic similarity, and injected into the prompt. This reduces hallucinations and keeps answers grounded in trusted sources.
+
+Chunking is one of the most important parts of a RAG system. Small chunks improve retrieval precision but may lose context. Large chunks preserve context but can reduce retrieval quality and increase token usage. A chunk size between 300 and 800 tokens with overlap is a common starting point.
+
+Embeddings are numerical vector representations of text. Similar pieces of text produce similar vectors. Embeddings power semantic search and enable retrieval of relevant documents even when the user's wording differs from the original document.
+
+Vector databases such as Pinecone, Weaviate, Chroma, Milvus, and FAISS store embeddings for efficient similarity search. Metadata filtering allows retrieval based on additional conditions such as document type, author, or creation date.
+
+Hybrid search combines keyword search (BM25) with semantic vector search. This often performs better than either technique alone because keyword search captures exact matches while vector search captures meaning. Reciprocal Rank Fusion (RRF) is a popular method for combining both ranking results.
+
+A reranker improves retrieval quality by taking the top retrieved documents and scoring them again using a cross-encoder model. Rerankers typically improve answer accuracy by selecting the most relevant context before passing it to the LLM.
+
+Hallucination occurs when an LLM confidently generates incorrect or unsupported information. Hallucinations can be reduced by grounding responses with retrieved documents, providing clear instructions, limiting generation scope, and refusing to answer when evidence is insufficient.
+
+Guardrails help enforce application rules. Common guardrails include prompt injection detection, toxicity filtering, personally identifiable information (PII) masking, schema validation, output moderation, and restricting tool access based on permissions.
+
+Tool calling allows an LLM to invoke external functions instead of generating everything itself. Examples include weather APIs, SQL databases, calculators, search engines, payment systems, and internal business APIs. The LLM decides when to call a tool and uses its result to produce the final answer.
+
+Structured outputs ensure responses follow a predefined JSON schema. Libraries such as Pydantic validate the output before it reaches downstream systems. This improves reliability when integrating LLMs with APIs and workflows.
+
+Observability is essential in production. Systems should log prompts, retrieved documents, model responses, latency, token usage, tool calls, and errors. Platforms such as LangSmith and Langfuse help visualize traces and debug complex LLM pipelines.
+
+Evaluation measures system quality before deployment. Common metrics include context precision, answer relevancy, faithfulness, retrieval recall, latency, cost per request, and user satisfaction. Automated evaluation frameworks such as RAGAS make continuous testing easier.
+
+Caching reduces cost and latency. Frequently repeated prompts, embedding requests, and retrieved search results can be cached to avoid unnecessary model calls. Semantic caching can reuse previous answers for similar questions.
+
+Token limits directly affect system design. Large prompts increase latency and cost while reducing the available space for model responses. Production systems should retrieve only the most relevant context instead of inserting entire documents.
+
+Temperature controls randomness during generation. A low temperature produces more deterministic responses, making it suitable for production systems, while higher temperatures encourage creativity for brainstorming and writing tasks.
+
+Streaming improves user experience by returning generated tokens immediately instead of waiting for the complete response. Users perceive faster performance even though total generation time remains similar.
+
+Production systems should implement retry mechanisms with exponential backoff when calling external APIs. Timeouts, circuit breakers, and fallback models improve reliability during outages or rate limiting.
+
+Security is critical for enterprise AI systems. Sensitive information should never be exposed in prompts or logs. Secrets must be stored securely, access should follow the principle of least privilege, and all user input should be validated before reaching the model.
+
+Human-in-the-loop workflows allow users to review or approve important decisions before execution. This approach is commonly used for financial transactions, medical recommendations, legal workflows, and content moderation.
+
+A production-ready LLM application balances accuracy, cost, latency, observability, security, and maintainability. Success depends not only on choosing the best model but also on building reliable retrieval, evaluation, monitoring, and deployment pipelines.

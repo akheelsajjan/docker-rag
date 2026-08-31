@@ -1,0 +1,16 @@
+services:
+  rag:
+    build: .
+    env_file:
+      - .env
+    volumes:
+      - ./checkpoints.db:/app/checkpoints.db
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    networks:
+      - ai-network
+
+networks:
+  ai-network:
+    external: true
