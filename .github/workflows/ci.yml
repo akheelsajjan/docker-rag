@@ -1,3 +1,4 @@
+# CI pipeline for docker-rag
 name: CI
 
 on:
