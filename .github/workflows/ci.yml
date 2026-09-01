@@ -31,3 +31,10 @@ jobs:
 
       - name: Build Docker image
         run: docker build -t docker-rag .
+
+      - name: Run tests
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
+          PINECONE_INDEX_NAME: ${{ secrets.PINECONE_INDEX_NAME }}
+        run: uv run python -m pytest tests -q
